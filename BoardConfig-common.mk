@@ -5,20 +5,23 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Build Duplicates
+BUILD_BROKEN_DUP_RULES := true
+
 include build/make/target/board/BoardConfigMainlineCommon.mk
 include build/make/target/board/BoardConfigPixelCommon.mk
 
 TARGET_ARCH := arm64
 TARGET_ARCH_VARIANT := armv8-2a
 TARGET_CPU_ABI := arm64-v8a
-TARGET_CPU_VARIANT := cortex-a55
+TARGET_CPU_VARIANT := cortex-a76
 
 TARGET_2ND_ARCH := arm
-TARGET_2ND_ARCH_VARIANT := armv8-a
+TARGET_2ND_ARCH_VARIANT := armv8-2a
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
-TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a53
+TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a76
 
 BOARD_BOOTCONFIG += \
     androidboot.load_modules_parallel=true \
@@ -254,3 +257,18 @@ SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += \
 
 # Protected VM firmware
 BOARD_PVMFWIMAGE_PARTITION_SIZE := 0x00100000
+
+# =========================================================
+# Alch3myOS Partition Size Fixes
+# =========================================================
+
+# Reclaim space by reducing the 'reserved' buffer in each partition.
+# Google's defaults are very large; these 20MB buffers are much safer for custom ROMs.
+BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 20971520
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE := 20971520
+BOARD_SYSTEM_EXTIMAGE_PARTITION_RESERVED_SIZE := 20971520
+BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE := 20971520
+
+# Disable the system_other image to save 66MB and avoid partition checks on it.
+# system_other is mostly for pre-optimization cache and isn't needed for Alch3myOS.
+BOARD_BUILD_SYSTEM_OTHER_IMAGE := false
